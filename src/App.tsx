@@ -1,7 +1,9 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { mergeSort } from './algorithms/mergeSort';
+import { mergeSortAnimations } from './algorithms/mergeSort';
 
 import classes from './App.module.css';
+
+let animations: number[][] = [];
 
 const App: React.FC = () => {
   const [array, setArray] = useState<number[]>([]);
@@ -21,7 +23,19 @@ const App: React.FC = () => {
   };
 
   const mergeSortHandler = () => {
-    setArray(prevState => mergeSort(prevState));
+    const arrayCopy = [...array];
+    animations = mergeSortAnimations(arrayCopy);
+    for (let i = 0; i < animations.length; i++) {
+      const bars = document.getElementsByClassName('App_bar__2Q8P3');
+      if (i % 2 !== 0) {
+        setTimeout(() => {
+          const bar = bars[animations[i][0]] as HTMLElement;
+          bar.style.height = `${animations[i][1] * 0.7}px`;
+        }, i * 50);
+      } else {
+        setTimeout(() => {}, i * 50);
+      }
+    }
   };
 
   useEffect(() => {
