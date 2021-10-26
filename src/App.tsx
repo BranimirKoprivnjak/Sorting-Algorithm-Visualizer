@@ -1,51 +1,70 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useReducer } from 'react';
 import { mergeSortAnimations } from './algorithms/mergeSort';
+import { State, Action, ActionType } from './models/model';
+import {
+  DEFAULT_ARRAY_SIZE,
+  ANIMATION_SPEED_MS,
+  COMPARISON_COLOR,
+} from './config/config';
 
 import classes from './App.module.css';
 
-let animations: number[][] = [];
+const reducer = (state: State, action: Action): any => {
+  switch (action.type) {
+    case ActionType.SizeChange:
+      return { value: state.value, size: action.payload };
+    case ActionType.ValueChange:
+      return { value: action.payload, size: state.size };
+    default:
+      return state;
+  }
+};
 
 const App: React.FC = () => {
-  const [array, setArray] = useState<number[]>([]);
-  const [slider, setSlider] = useState<number>(50);
+  const [state, dispatch] = useReducer(reducer, {
+    value: [],
+    size: DEFAULT_ARRAY_SIZE,
+  });
 
   const sliderChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    setSlider(+event.target!.value);
+    dispatch({ type: ActionType.SizeChange, payload: +event.target!.value });
   };
 
   // https://stackoverflow.com/questions/1527803/generating-random-whole-numbers-in-javascript-in-a-specific-range
-  const generateArrayHandler = () => {
+  const generateArrayHandler = useCallback(() => {
     const generatedArray: number[] = [];
-    for (let i = 0; i < slider; i++)
+    for (let i = 0; i < state.size; i++)
       // duplicated values allowed!
       generatedArray.push(Math.floor(Math.random() * (800 - 5 + 1)) + 5);
-    setArray(generatedArray);
-  };
+    dispatch({ type: ActionType.ValueChange, payload: generatedArray });
+  }, [state.size]);
 
   const mergeSortHandler = () => {
-    const arrayCopy = [...array];
-    animations = mergeSortAnimations(arrayCopy);
+    const arrayCopy = [...state.value];
+    const animations: number[][] = mergeSortAnimations(arrayCopy);
     for (let i = 0; i < animations.length; i++) {
       const bars = document.getElementsByClassName('App_bar__2Q8P3');
-      if (i % 2 !== 0) {
+      const bar = bars[animations[i][0]] as HTMLElement;
+      if (i % 2 === 0) {
         setTimeout(() => {
-          const bar = bars[animations[i][0]] as HTMLElement;
-          bar.style.height = `${animations[i][1] * 0.7}px`;
-        }, i * 50);
+          bar.style.backgroundColor = COMPARISON_COLOR;
+        }, i * ANIMATION_SPEED_MS);
       } else {
-        setTimeout(() => {}, i * 50);
+        setTimeout(() => {
+          bar.style.height = `${animations[i][1] * 0.7}px`;
+        }, i * ANIMATION_SPEED_MS);
       }
     }
   };
 
   useEffect(() => {
     generateArrayHandler();
-  }, [slider]);
+  }, [generateArrayHandler]);
 
   return (
     <>
       <div className={classes.container}>
-        {array.map((value, index) => (
+        {state.value.map((value: number, index: number) => (
           <div
             key={index}
             className={classes.bar}
