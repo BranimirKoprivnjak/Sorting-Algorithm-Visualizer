@@ -1,5 +1,6 @@
 import { ChangeEvent, useCallback, useEffect, useReducer } from 'react';
 import { mergeSortAnimations } from './algorithms/mergeSort';
+import { bubbleSortOpt } from './algorithms/bubbleSort';
 import { State, Action, ActionType } from './models/model';
 import {
   DEFAULT_ARRAY_SIZE,
@@ -57,6 +58,18 @@ const App: React.FC = () => {
     }
   };
 
+  const bubbleSortHandler = () => {
+    const arrayCopy = [...state.value];
+    const animations: number[][] = bubbleSortOpt(arrayCopy);
+    for (let i = 0; i < animations.length; i++) {
+      const bars = document.getElementsByClassName('App_bar__2Q8P3');
+      const bar = bars[animations[i][0]] as HTMLElement;
+      setTimeout(() => {
+        bar.style.height = `${animations[i][1] * 0.7}px`;
+      }, i * ANIMATION_SPEED_MS);
+    }
+  };
+
   useEffect(() => {
     generateArrayHandler();
   }, [generateArrayHandler]);
@@ -84,6 +97,7 @@ const App: React.FC = () => {
           onChange={sliderChangeHandler}
         ></input>
         <button onClick={mergeSortHandler}>Merge Sort</button>
+        <button onClick={bubbleSortHandler}>Bubble Sort</button>
       </div>
     </>
   );
