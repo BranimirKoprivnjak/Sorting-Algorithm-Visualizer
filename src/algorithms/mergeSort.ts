@@ -1,13 +1,19 @@
 // merge sort using recursion
-export const mergeSortAnimations = array => {
-  const animations = [];
-  if (array.length <= 1) return array;
+export const mergeSortAnimations = (array: number[]): number[][] => {
+  const animations: number[][] = [];
+  if (array.length <= 1) return animations;
   const auxArray = array.slice();
   mergeSort(array, 0, array.length - 1, auxArray, animations);
   return animations;
 };
 
-const mergeSort = (array, startIndex, endIndex, auxArray, animations) => {
+const mergeSort = (
+  array: number[],
+  startIndex: number,
+  endIndex: number,
+  auxArray: number[],
+  animations: number[][]
+) => {
   if (startIndex === endIndex) return;
   const middleIndex = Math.floor((startIndex + endIndex) / 2);
   mergeSort(auxArray, startIndex, middleIndex, array, animations);
@@ -16,12 +22,12 @@ const mergeSort = (array, startIndex, endIndex, auxArray, animations) => {
 };
 
 const merge = (
-  array,
-  startIndex,
-  middleIndex,
-  endIndex,
-  auxArray,
-  animations
+  array: number[],
+  startIndex: number,
+  middleIndex: number,
+  endIndex: number,
+  auxArray: number[],
+  animations: number[][]
 ) => {
   let k = startIndex,
     i = startIndex,
