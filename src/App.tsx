@@ -1,7 +1,9 @@
 import { ChangeEvent, useCallback, useEffect, useReducer } from 'react';
 import { mergeSortAnimations } from './algorithms/mergeSort';
+import { quickSortAnimations } from './algorithms/quickSort';
 import { bubbleSortOpt } from './algorithms/bubbleSort';
-import { State, Action, ActionType } from './models/model';
+import { heapSort } from './algorithms/heapSort';
+import { State, Action, ActionType, Animation } from './models/model';
 import {
   DEFAULT_ARRAY_SIZE,
   ANIMATION_SPEED_MS,
@@ -42,17 +44,19 @@ const App: React.FC = () => {
 
   const mergeSortHandler = () => {
     const arrayCopy = [...state.value];
-    const animations: number[][] = mergeSortAnimations(arrayCopy);
+    const animations: Animation[] = mergeSortAnimations(arrayCopy);
+    console.log(animations);
+
     for (let i = 0; i < animations.length; i++) {
       const bars = document.getElementsByClassName('App_bar__2Q8P3');
-      const bar = bars[animations[i][0]] as HTMLElement;
-      if (i % 2 === 0) {
+      const bar = bars[animations[i].position[0]] as HTMLElement;
+      if (animations[i].type === 'divide') {
         setTimeout(() => {
-          bar.style.backgroundColor = COMPARISON_COLOR;
-        }, i * ANIMATION_SPEED_MS);
-      } else {
-        setTimeout(() => {
-          bar.style.height = `${animations[i][1] * 0.7}px`;
+          bar.style.backgroundColor = 'purple';
+          setTimeout(
+            () => (bar.style.backgroundColor = 'aquamarine'),
+            i * ANIMATION_SPEED_MS
+          );
         }, i * ANIMATION_SPEED_MS);
       }
     }
@@ -61,6 +65,31 @@ const App: React.FC = () => {
   const bubbleSortHandler = () => {
     const arrayCopy = [...state.value];
     const animations: number[][] = bubbleSortOpt(arrayCopy);
+    for (let i = 0; i < animations.length; i++) {
+      const bars = document.getElementsByClassName('App_bar__2Q8P3');
+      const bar = bars[animations[i][0]] as HTMLElement;
+      setTimeout(() => {
+        bar.style.height = `${animations[i][1] * 0.7}px`;
+      }, i * ANIMATION_SPEED_MS);
+    }
+  };
+
+  const quickSortHandler = () => {
+    const arrayCopy = [...state.value];
+    const animations: number[][] = quickSortAnimations(arrayCopy);
+    for (let i = 0; i < animations.length; i++) {
+      const bars = document.getElementsByClassName('App_bar__2Q8P3');
+      const bar = bars[animations[i][0]] as HTMLElement;
+      setTimeout(() => {
+        bar.style.height = `${animations[i][1] * 0.7}px`;
+      }, i * ANIMATION_SPEED_MS);
+    }
+  };
+
+  const heapSortHandler = () => {
+    const arrayCopy = [...state.value];
+    const animations: number[][] = heapSort(arrayCopy);
+    console.log(animations);
     for (let i = 0; i < animations.length; i++) {
       const bars = document.getElementsByClassName('App_bar__2Q8P3');
       const bar = bars[animations[i][0]] as HTMLElement;
@@ -98,6 +127,8 @@ const App: React.FC = () => {
         ></input>
         <button onClick={mergeSortHandler}>Merge Sort</button>
         <button onClick={bubbleSortHandler}>Bubble Sort</button>
+        <button onClick={quickSortHandler}>Quick Sort</button>
+        <button onClick={heapSortHandler}>Heap Sort</button>
       </div>
     </>
   );

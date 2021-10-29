@@ -11,3 +11,8 @@ export type State = {
   value: number[];
   size: number;
 };
+
+export type Animation = {
+  type: string;
+  position: number[];
+};
