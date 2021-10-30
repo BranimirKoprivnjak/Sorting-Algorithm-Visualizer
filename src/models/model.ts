@@ -1,18 +1,19 @@
-export enum ActionType {
-  SizeChange = 'SIZE_CHANGE',
-  ValueChange = 'VALUE_CHANGE',
+import store from '../store/redux';
+
+// application state type
+export interface State {
+  algorithm: string;
+  array: number[];
+  arraySize: number;
+  animationSpeed: number;
 }
 
-export type Action =
-  | { type: ActionType.SizeChange; payload: number }
-  | { type: ActionType.ValueChange; payload: number[] };
-
-export type State = {
-  value: number[];
-  size: number;
-};
-
-export type Animation = {
+// animation data structure type
+export interface Animation {
   type: string;
   position: number[];
-};
+}
+
+// custom redux hooks types, https://redux.js.org/usage/usage-with-typescript
+export type RootState = ReturnType<typeof store.getState>;
+export type Dispatch = typeof store.dispatch;

@@ -5,14 +5,10 @@
   height: 600px;
 }
 
-.menu {
+.bar {
+  background-color: #008060;
+  margin: 0 1px;
   display: flex;
   justify-content: center;
-  align-items: center;
-}
-
-.bar {
-  background-color: aquamarine;
-  margin: 0 1px;
-  width: 5px;
+  /* width: 5px; */
 }
