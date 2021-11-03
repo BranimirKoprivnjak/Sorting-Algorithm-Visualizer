@@ -1,5 +1,10 @@
+export interface quickAnimation {
+  type: string;
+  position: number[][];
+}
+
 export const quickSortAnimations = (array: number[]) => {
-  const animations: number[][] = [];
+  const animations: quickAnimation[] = [];
   if (array.length <= 1) return animations;
   quickSort(array, 0, array.length - 1, animations);
   return animations;
@@ -9,7 +14,7 @@ const quickSort = (
   array: number[],
   startIndex: number,
   endIndex: number,
-  animations: number[][]
+  animations: quickAnimation[]
 ) => {
   let index,
     i = startIndex,
@@ -24,20 +29,42 @@ const partition = (
   array: number[],
   startIndex: number,
   endIndex: number,
-  animations: number[][]
+  animations: quickAnimation[]
 ) => {
-  const pivot = array[Math.floor((startIndex + endIndex) / 2)];
+  const middle = Math.floor((startIndex + endIndex) / 2);
+  //animations.push({ type: 'pivot', position: [[middle]] });
+  const pivot = array[middle];
   let i = startIndex,
     j = endIndex;
   while (i <= j) {
-    while (array[i] < pivot) i++;
-    while (array[j] > pivot) j--;
+    while (array[i] < pivot) {
+      // comparison
+      animations.push({
+        type: 'comparison',
+        position: [[i], [j]],
+      });
+      i++;
+    }
+    while (array[j] > pivot) {
+      // comparison
+      animations.push({
+        type: 'comparison',
+        position: [[i], [j]],
+      });
+      j--;
+    }
     if (i <= j) {
-      animations.push([i, array[j]]);
-      animations.push([j, array[i]]);
       const temp = array[i];
       array[i] = array[j];
       array[j] = temp;
+      // swap
+      animations.push({
+        type: 'swap',
+        position: [
+          [i, array[i]],
+          [j, temp],
+        ],
+      });
       i++;
       j--;
     }
