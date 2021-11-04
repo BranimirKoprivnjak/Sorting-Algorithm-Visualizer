@@ -30,22 +30,22 @@ const ToolBar: React.FC = () => {
     dispatch(stateActions.arrayChange(generatedArray));
   }, [state.arraySize, dispatch]);
 
-  const mergeSortHandler = () => {
-    dispatch(stateActions.algorithm('Merge'));
-    mergeSortAnimation(arrayCopy, state.animationSpeed);
+  const animationHelper = (algorithm: string, sortAnimation: Function) => {
+    dispatch(stateActions.algorithm(algorithm));
+    sortAnimation(arrayCopy, state.animationSpeed);
   };
 
+  const mergeSortHandler = () => {
+    animationHelper('Merge', mergeSortAnimation);
+  };
   const bubbleSortHandler = () => {
-    dispatch(stateActions.algorithm('Bubble'));
-    bubbleSortAnimation(arrayCopy, state.animationSpeed);
+    animationHelper('Bubble', bubbleSortAnimation);
   };
   const quickSortHandler = () => {
-    dispatch(stateActions.algorithm('Quick'));
-    quickSortAnimation(arrayCopy, state.animationSpeed);
+    animationHelper('Quick', quickSortAnimation);
   };
   const heapSortHandler = () => {
-    dispatch(stateActions.algorithm('Heap'));
-    heapSortAnimation(arrayCopy, state.animationSpeed);
+    animationHelper('Heap', heapSortAnimation);
   };
 
   useEffect(() => {

@@ -1,0 +1,19 @@
+.legend {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-top: 15px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+}
+
+.color {
+  margin: 0 8px;
+  width: 25px;
+  height: 16px;
+}

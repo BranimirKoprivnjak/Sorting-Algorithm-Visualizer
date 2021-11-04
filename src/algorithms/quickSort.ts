@@ -1,10 +1,7 @@
-export interface quickAnimation {
-  type: string;
-  position: number[][];
-}
+import { Animation } from '../models/model';
 
 export const quickSortAnimations = (array: number[]) => {
-  const animations: quickAnimation[] = [];
+  const animations: Animation[] = [];
   if (array.length <= 1) return animations;
   quickSort(array, 0, array.length - 1, animations);
   return animations;
@@ -14,7 +11,7 @@ const quickSort = (
   array: number[],
   startIndex: number,
   endIndex: number,
-  animations: quickAnimation[]
+  animations: Animation[]
 ) => {
   let index,
     i = startIndex,
@@ -29,11 +26,11 @@ const partition = (
   array: number[],
   startIndex: number,
   endIndex: number,
-  animations: quickAnimation[]
+  animations: Animation[]
 ) => {
   const middle = Math.floor((startIndex + endIndex) / 2);
-  //animations.push({ type: 'pivot', position: [[middle]] });
   const pivot = array[middle];
+  animations.push({ type: 'pivot', value: [[middle], [pivot]] });
   let i = startIndex,
     j = endIndex;
   while (i <= j) {
@@ -41,7 +38,7 @@ const partition = (
       // comparison
       animations.push({
         type: 'comparison',
-        position: [[i], [j]],
+        value: [[i], [j]],
       });
       i++;
     }
@@ -49,18 +46,26 @@ const partition = (
       // comparison
       animations.push({
         type: 'comparison',
-        position: [[i], [j]],
+        value: [[i], [j]],
       });
       j--;
     }
-    if (i <= j) {
+    // if we want to skip swap of the same element
+    if (i === j) {
+      animations.push({ type: 'comparison', value: [[i], [j]] });
+      i++;
+      j--;
+    }
+    if (i < j) {
       const temp = array[i];
       array[i] = array[j];
       array[j] = temp;
+      // comparison
+      animations.push({ type: 'comparison', value: [[i], [j]] });
       // swap
       animations.push({
         type: 'swap',
-        position: [
+        value: [
           [i, array[i]],
           [j, temp],
         ],

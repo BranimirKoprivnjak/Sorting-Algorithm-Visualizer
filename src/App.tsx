@@ -8,7 +8,7 @@ const App: React.FC = () => {
 
   return (
     <>
-      <Chart array={state.array} />
+      <Chart state={state} />
       <ToolBar />
     </>
   );

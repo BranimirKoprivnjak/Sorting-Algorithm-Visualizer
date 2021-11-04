@@ -1,53 +1,56 @@
+import {
+  PRIMARY_COLOR,
+  SECONDARY_COLOR,
+  TERTIARY_COLOR,
+} from '../config/config';
 import { heapSort } from '../algorithms/heapSort';
-import { heapAnimation } from '../algorithms/heapSort';
+import { Animation } from '../models/model';
 
 export const heapSortAnimation = (array: number[], animationSpeed: number) => {
-  const animations: heapAnimation[] = heapSort(array);
-  console.log(animations);
-  let timer: number = 0;
-
+  const animations: Animation[] = heapSort(array);
   const bars = document.getElementsByClassName('Chart_bar__1o6z0');
+  let timer = 0,
+    check = 0;
   for (let i = 0; i < animations.length; i++) {
-    const barOne = bars[animations[i].position[0][0]] as HTMLElement;
-    const barTwo = bars[animations[i].position[1][0]] as HTMLElement;
+    const [valueOne, valueTwo] = animations[i].value;
+    const [indexOne, heightOne] = valueOne;
+    const [indexTwo, heightTwo] = valueTwo;
+    const animationType = animations[i].type;
+    const barOne = bars[indexOne] as HTMLElement;
+    const barTwo = bars[indexTwo] as HTMLElement;
+    const barOneStyle = barOne.style;
+    const barTwoStyle = barTwo.style;
+    if (check !== indexOne) {
+      check = indexOne;
+      setTimeout(() => {
+        barOneStyle.backgroundColor = SECONDARY_COLOR;
+        barTwoStyle.backgroundColor = SECONDARY_COLOR;
+      }, timer * animationSpeed);
+      timer++;
+    }
     setTimeout(() => {
-      barOne.style.backgroundColor = 'blue';
-      barTwo.style.backgroundColor = 'blue';
+      barOneStyle.backgroundColor =
+        animationType === 'swap' ? TERTIARY_COLOR : PRIMARY_COLOR;
+      barTwoStyle.backgroundColor =
+        animationType === 'swap' ? TERTIARY_COLOR : PRIMARY_COLOR;
     }, timer * animationSpeed);
-    timer++;
-    setTimeout(() => {
-      barOne.style.backgroundColor =
-        animations[i].type === 'swap' ? 'red' : '#008060';
-      barTwo.style.backgroundColor =
-        animations[i].type === 'swap' ? 'red' : '#008060';
-    }, timer * animationSpeed);
-    if (animations[i].type === 'swap') {
+    if (animationType === 'swap') {
       timer++;
       // add timer if color is red, aka its swap
       setTimeout(() => {
-        barOne.style.height = `${animations[i].position[0][1] * 0.7}px`;
-        barTwo.style.height = `${animations[i].position[1][1] * 0.7}px`;
-        barOne.innerHTML =
-          array.length <= 20 ? `${animations[i].position[0][1]}` : '';
-        barTwo.innerHTML =
-          array.length <= 20 ? `${animations[i].position[1][1]}` : '';
+        barOneStyle.height = `${heightOne * 0.7}px`;
+        barTwoStyle.height = `${heightTwo * 0.7}px`;
+        barOne.innerHTML = array.length <= 20 ? `${heightOne}` : '';
+        barTwo.innerHTML = array.length <= 20 ? `${heightTwo}` : '';
       }, timer * animationSpeed);
       timer++;
       // remove red color, timer++
       setTimeout(() => {
-        barOne.style.backgroundColor = '#008060';
-        barTwo.style.backgroundColor = '#008060';
+        barOneStyle.backgroundColor = PRIMARY_COLOR;
+        barTwoStyle.backgroundColor = PRIMARY_COLOR;
       }, timer * animationSpeed);
       timer++;
-      // sorted bars -> purple color
     }
   }
-  // for (let i = 0; i < animations.length; i++) {
-  //   const bars = document.getElementsByClassName('Chart_bar__1o6z0');
-  //   const bar = bars[animations[i][0]] as HTMLElement;
-  //   setTimeout(() => {
-  //     bar.style.height = `${animations[i][1] * 0.7}px`;
-  //     bar.innerHTML = array.length <= 20 ? `${animations[i][1]}` : '';
-  //   }, i * animationSpeed);
-  // }
+  return array;
 };

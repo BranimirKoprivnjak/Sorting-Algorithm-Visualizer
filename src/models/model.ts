@@ -11,7 +11,7 @@ export interface State {
 // animation data structure type
 export interface Animation {
   type: string;
-  position: number[];
+  value: number[][];
 }
 
 // custom redux hooks types, https://redux.js.org/usage/usage-with-typescript
