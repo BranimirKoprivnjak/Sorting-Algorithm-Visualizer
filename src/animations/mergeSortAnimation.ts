@@ -1,41 +1,59 @@
+import {
+  PRIMARY_COLOR,
+  SECONDARY_COLOR,
+  TERTIARY_COLOR,
+} from '../config/config';
 import { mergeSortAnimations } from '../algorithms/mergeSort';
 import { Animation } from '../models/model';
 
 export const mergeSortAnimation = (array: number[], animationSpeed: number) => {
   const animations: Animation[] = mergeSortAnimations(array);
-  let timer: number = 0;
   const bars = document.getElementsByClassName('Chart_bar__1o6z0');
+  let timer = 0;
   for (let i = 0; i < animations.length; i++) {
-    if (animations[i].type === 'comparison') {
-      const barOne = bars[animations[i].value[0][0]] as HTMLElement;
-      const barTwo = bars[animations[i].value[1][0]] as HTMLElement;
+    const animationType = animations[i].type;
+    if (animationType === 'comparison') {
+      const [valueOne, valueTwo] = animations[i].value;
+      const [indexOne] = valueOne;
+      const [indexTwo] = valueTwo;
+      const barOne = bars[indexOne] as HTMLElement;
+      const barTwo = bars[indexTwo] as HTMLElement;
+      const barOneStyle = barOne.style;
+      const barTwoStyle = barTwo.style;
       setTimeout(() => {
-        barOne.style.backgroundColor = 'blue';
-        barTwo.style.backgroundColor = 'blue';
+        barOneStyle.backgroundColor = SECONDARY_COLOR;
+        barTwoStyle.backgroundColor = SECONDARY_COLOR;
       }, timer * animationSpeed);
       timer++;
       setTimeout(() => {
-        barOne.style.backgroundColor = '#008060';
-        barTwo.style.backgroundColor = '#008060';
+        barOneStyle.backgroundColor = PRIMARY_COLOR;
+        barTwoStyle.backgroundColor = PRIMARY_COLOR;
       }, timer * animationSpeed);
     }
-    if (animations[i].type === 'swap') {
-      const bar = bars[animations[i].value[0][0]] as HTMLElement;
+    if (animationType === 'swap') {
+      const [valueOne, valueTwo] = animations[i].value;
+      const [index] = valueOne;
+      const [height] = valueTwo;
+      const bar = bars[index] as HTMLElement;
+      const barStyle = bar.style;
       setTimeout(() => {
-        bar.style.backgroundColor = 'red';
+        barStyle.backgroundColor = TERTIARY_COLOR;
+      }, timer * animationSpeed);
+      if (parseInt(barStyle.height) !== Math.floor(height * 0.7)) timer++;
+
+      setTimeout(() => {
+        barStyle.height = `${height * 0.7}px`;
+        bar.innerHTML = array.length <= 20 ? `${height}` : '';
       }, timer * animationSpeed);
       timer++;
+
       setTimeout(() => {
-        bar.style.height = `${animations[i].value[1][0] * 0.7}px`;
-        bar.innerHTML =
-          array.length <= 20 ? `${animations[i].value[1][0]}` : '';
-      }, timer * animationSpeed);
-      timer++;
-      setTimeout(() => {
-        bar.style.backgroundColor = '#008060';
+        barStyle.backgroundColor = PRIMARY_COLOR;
       }, timer * animationSpeed);
       timer++;
     }
   }
-  return array;
+  return [array, timer];
 };
+
+// Math.floor(animations[i].value[1][0] * 0.7) ===parseInt(bar.style.height)

@@ -44,12 +44,12 @@ const merge = (
     }
   }
   while (i <= middleIndex) {
-    animations.push({ type: 'comparison', value: [[i], [i]] });
+    animations.push({ type: 'comparison', value: [[k], [k]] });
     animations.push({ type: 'swap', value: [[k], [auxArray[i]]] });
     array[k++] = auxArray[i++];
   }
   while (j <= endIndex) {
-    animations.push({ type: 'comparison', value: [[j], [j]] });
+    animations.push({ type: 'comparison', value: [[k], [k]] });
     animations.push({ type: 'swap', value: [[k], [auxArray[j]]] });
     array[k++] = auxArray[j++];
   }

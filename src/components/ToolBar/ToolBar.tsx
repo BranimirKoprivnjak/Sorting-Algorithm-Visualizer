@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useEffect } from 'react';
+import { ChangeEvent, useCallback, useEffect, useRef } from 'react';
 import { bubbleSortAnimation } from '../../animations/bubbleSortAnimation';
 import { heapSortAnimation } from '../../animations/heapSortAnimation';
 import { mergeSortAnimation } from '../../animations/mergeSortAnimation';
@@ -11,6 +11,7 @@ import classes from './ToolBar.module.css';
 const ToolBar: React.FC = () => {
   const dispatch = useCustomDispatch();
   const state = useCustomSelector(statePara => statePara.state);
+  const refToolbar = useRef<HTMLDivElement>(null);
   const arrayCopy = [...state.array];
 
   const sizeChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -18,7 +19,7 @@ const ToolBar: React.FC = () => {
   };
 
   const speedChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    dispatch(stateActions.animationSpeedChange(+event.target!.value * 15));
+    dispatch(stateActions.animationSpeedChange(+event.target!.value * 10));
   };
 
   // https://stackoverflow.com/questions/1527803/generating-random-whole-numbers-in-javascript-in-a-specific-range
@@ -31,21 +32,27 @@ const ToolBar: React.FC = () => {
   }, [state.arraySize, dispatch]);
 
   const animationHelper = (algorithm: string, sortAnimation: Function) => {
+    const animationSpeed = state.animationSpeed;
     dispatch(stateActions.algorithm(algorithm));
-    sortAnimation(arrayCopy, state.animationSpeed);
+    refToolbar.current!.style.display = 'none';
+    const [sortedArray, timer] = sortAnimation(arrayCopy, animationSpeed);
+    setTimeout(() => {
+      dispatch(stateActions.arrayChange(sortedArray));
+      refToolbar.current!.style.display = 'flex';
+    }, timer * animationSpeed);
   };
 
   const mergeSortHandler = () => {
-    animationHelper('Merge', mergeSortAnimation);
+    animationHelper('Merge Sort', mergeSortAnimation);
   };
   const bubbleSortHandler = () => {
-    animationHelper('Bubble', bubbleSortAnimation);
+    animationHelper('Bubble Sort', bubbleSortAnimation);
   };
   const quickSortHandler = () => {
-    animationHelper('Quick', quickSortAnimation);
+    animationHelper('Quick Sort', quickSortAnimation);
   };
   const heapSortHandler = () => {
-    animationHelper('Heap', heapSortAnimation);
+    animationHelper('Heap Sort', heapSortAnimation);
   };
 
   useEffect(() => {
@@ -53,7 +60,7 @@ const ToolBar: React.FC = () => {
   }, [generateArrayHandler]);
 
   return (
-    <div className={classes.toolbar}>
+    <div className={classes.toolbar} ref={refToolbar}>
       <button onClick={generateArrayHandler}>Generate New Array</button>
       <div className={classes.slider}>
         <label htmlFor="size">Array Size</label>
@@ -66,12 +73,14 @@ const ToolBar: React.FC = () => {
         ></input>
       </div>
       <div className={classes.slider}>
-        <label htmlFor="speed">Animation Speed</label>
+        <label htmlFor="speed">
+          Animation Speed ({state.animationSpeed} ms)
+        </label>
         <input
           id="speed"
           type="range"
           min="1"
-          max="10"
+          max="50"
           onChange={speedChangeHandler}
         ></input>
       </div>

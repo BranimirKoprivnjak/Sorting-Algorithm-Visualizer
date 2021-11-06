@@ -11,29 +11,34 @@ const Legend: React.FC<{ algorithm: string }> = ({ algorithm }) => {
       className={classes.legend}
       style={{ visibility: algorithm ? 'visible' : 'hidden' }}
     >
-      <div className={classes.container}>
-        <div
-          className={classes.color}
-          style={{ backgroundColor: `${SECONDARY_COLOR}` }}
-        ></div>
-        <p>Comparison</p>
+      <div>
+        <h2>{algorithm}</h2>
       </div>
-      <div className={classes.container}>
-        <div
-          className={classes.color}
-          style={{ backgroundColor: `${TERTIARY_COLOR}` }}
-        ></div>
-        <p>Swap</p>
-      </div>
-      {algorithm === 'Quick' && (
+      <div className={classes.section}>
         <div className={classes.container}>
           <div
             className={classes.color}
-            style={{ backgroundColor: `${QUATERNARY_COLOR}` }}
+            style={{ backgroundColor: `${SECONDARY_COLOR}` }}
           ></div>
-          <p>Pivot</p>
+          <p>Comparison</p>
         </div>
-      )}
+        <div className={classes.container}>
+          <div
+            className={classes.color}
+            style={{ backgroundColor: `${TERTIARY_COLOR}` }}
+          ></div>
+          <p>{algorithm === 'Merge Sort' ? 'Change' : 'Swap'}</p>
+        </div>
+        {algorithm === 'Quick Sort' && (
+          <div className={classes.container}>
+            <div
+              className={classes.color}
+              style={{ backgroundColor: `${QUATERNARY_COLOR}` }}
+            ></div>
+            <p>Pivot</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -29,7 +29,7 @@ export const quickSortAnimation = (array: number[], animationSpeed: number) => {
         const pivotBar = bars[pivot.index] as HTMLElement;
         pivotBar.style.backgroundColor = QUATERNARY_COLOR;
       }, timer * animationSpeed);
-      timer++;
+      // timer++;
     } else {
       const barOne = bars[indexOne] as HTMLElement;
       const barTwo = bars[indexTwo] as HTMLElement;
@@ -62,6 +62,9 @@ export const quickSortAnimation = (array: number[], animationSpeed: number) => {
           // if we are comparing same values, any can become pivot
           let check = false;
           if (heightOne === pivot.height) {
+            // delete old pivot
+            const bar = bars[pivot.index] as HTMLElement;
+            bar.style.backgroundColor = PRIMARY_COLOR;
             check = true;
             barOneStyle.backgroundColor = QUATERNARY_COLOR;
             pivot.index = indexOne;
@@ -69,6 +72,9 @@ export const quickSortAnimation = (array: number[], animationSpeed: number) => {
             barOneStyle.backgroundColor = PRIMARY_COLOR;
           }
           if (heightTwo === pivot.height && !check) {
+            const bar = bars[pivot.index] as HTMLElement;
+            bar.style.backgroundColor = PRIMARY_COLOR;
+
             barTwoStyle.backgroundColor = QUATERNARY_COLOR;
             pivot.index = indexTwo;
           } else {
@@ -87,5 +93,5 @@ export const quickSortAnimation = (array: number[], animationSpeed: number) => {
       }
     }
   }
-  return array;
+  return [array, timer];
 };

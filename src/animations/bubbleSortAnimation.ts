@@ -54,5 +54,5 @@ export const bubbleSortAnimation = (
       timer++;
     }
   }
-  return array;
+  return [array, timer];
 };

@@ -52,5 +52,5 @@ export const heapSortAnimation = (array: number[], animationSpeed: number) => {
       timer++;
     }
   }
-  return array;
+  return [array, timer];
 };
