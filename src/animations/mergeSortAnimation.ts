@@ -1,23 +1,21 @@
-import {
-  PRIMARY_COLOR,
-  SECONDARY_COLOR,
-  TERTIARY_COLOR,
-  QUINARY_COLOR,
-} from '../config/config';
+import { PRIMARY_COLOR, TERTIARY_COLOR, QUINARY_COLOR } from '../config/config';
 import { mergeSortAnimations } from '../algorithms/mergeSort';
 import { Animation } from '../models/model';
+
+import { resetColor, comparison, beetweenAnimations } from './helpers';
 
 export const mergeSortAnimation = (array: number[], animationSpeed: number) => {
   const animations: Animation[] = mergeSortAnimations(array);
   const bars = document.getElementsByClassName('Chart_bar__1o6z0');
   let timer = 0;
-  let check = false;
+  let isLastMerge = false;
   for (let i = 0; i < animations.length; i++) {
     const animationType = animations[i].type;
 
-    if (i !== 0 && animations[i - 1].type === 'swap') timer++;
+    const prevIndex = i - 1;
+    if (i !== 0 && animations[prevIndex].type === 'swap') timer++;
 
-    if (animationType === 'flag') check = true;
+    if (animationType === 'flag') isLastMerge = true;
     if (animationType === 'comparison') {
       const [valueOne, valueTwo] = animations[i].value;
       const [indexOne] = valueOne;
@@ -26,15 +24,17 @@ export const mergeSortAnimation = (array: number[], animationSpeed: number) => {
       const barTwo = bars[indexTwo] as HTMLElement;
       const barOneStyle = barOne.style;
       const barTwoStyle = barTwo.style;
-      setTimeout(() => {
-        barOneStyle.backgroundColor = SECONDARY_COLOR;
-        barTwoStyle.backgroundColor = SECONDARY_COLOR;
-      }, timer * animationSpeed);
-      timer++;
-      setTimeout(() => {
-        barOneStyle.backgroundColor = PRIMARY_COLOR;
-        barTwoStyle.backgroundColor = PRIMARY_COLOR;
-      }, timer * animationSpeed);
+
+      timer = comparison(timer, barOneStyle, barTwoStyle, animationSpeed);
+
+      beetweenAnimations(
+        timer,
+        barOneStyle,
+        barTwoStyle,
+        animationSpeed,
+        animationType,
+        true
+      );
     }
     if (animationType === 'swap') {
       const [valueOne, valueTwo] = animations[i].value;
@@ -45,6 +45,7 @@ export const mergeSortAnimation = (array: number[], animationSpeed: number) => {
       setTimeout(() => {
         barStyle.backgroundColor = TERTIARY_COLOR;
       }, timer * animationSpeed);
+
       if (parseInt(barStyle.height) !== Math.floor(height * 0.7)) timer++;
 
       setTimeout(() => {
@@ -56,12 +57,11 @@ export const mergeSortAnimation = (array: number[], animationSpeed: number) => {
       setTimeout(() => {
         barStyle.backgroundColor = PRIMARY_COLOR;
       }, timer * animationSpeed);
-      //timer++;
     }
-    if (check) {
-      const [valueOne, valueTwo] = animations[i].value;
+    // if its last recursion call aka last merge, mark elements as sorted
+    if (isLastMerge) {
+      const [valueOne] = animations[i].value;
       const [index] = valueOne;
-      const [height] = valueTwo;
       const bar = bars[index] as HTMLElement;
       const barStyle = bar.style;
       setTimeout(() => {
@@ -70,12 +70,7 @@ export const mergeSortAnimation = (array: number[], animationSpeed: number) => {
       timer++;
     }
   }
-  timer++;
-  for (let i = 0; i < array.length; i++) {
-    setTimeout(() => {
-      const bar = bars[i] as HTMLElement;
-      bar.style.backgroundColor = PRIMARY_COLOR;
-    }, timer * animationSpeed);
-  }
+  // after sorting, reset color back to green
+  timer = resetColor(timer, array, bars, animationSpeed);
   return [array, timer];
 };

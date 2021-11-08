@@ -1,18 +1,14 @@
-import {
-  PRIMARY_COLOR,
-  SECONDARY_COLOR,
-  TERTIARY_COLOR,
-} from '../config/config';
+import { PRIMARY_COLOR, QUINARY_COLOR } from '../config/config';
 import { heapSort } from '../algorithms/heapSort';
 import { Animation } from '../models/model';
 
+import { resetColor, comparison, beetweenAnimations } from './helpers';
+
 export const heapSortAnimation = (array: number[], animationSpeed: number) => {
   const animations: Animation[] = heapSort(array);
-  console.log(animations);
-
   const bars = document.getElementsByClassName('Chart_bar__1o6z0');
   let timer = 0,
-    check = 0;
+    comparedElementIndex = 0;
   for (let i = 0; i < animations.length; i++) {
     if (animations[i].type !== 'sorted') {
       const [valueOne, valueTwo] = animations[i].value;
@@ -24,27 +20,27 @@ export const heapSortAnimation = (array: number[], animationSpeed: number) => {
       const barOneStyle = barOne.style;
       const barTwoStyle = barTwo.style;
 
-      if (i !== 0 && animations[i - 1].type === 'sorted') timer++;
+      const prevIndex = i - 1;
+      if (i !== 0 && animations[prevIndex].type === 'sorted') timer++;
 
-      if (i !== 0 && animations[i - 1].type === 'swap') timer++;
+      if (i !== 0 && animations[prevIndex].type === 'swap') timer++;
 
-      if (check !== indexOne) {
-        check = indexOne;
-        setTimeout(() => {
-          barOneStyle.backgroundColor = SECONDARY_COLOR;
-          barTwoStyle.backgroundColor = SECONDARY_COLOR;
-        }, timer * animationSpeed);
-        timer++;
+      if (comparedElementIndex !== indexOne) {
+        comparedElementIndex = indexOne;
+        timer = comparison(timer, barOneStyle, barTwoStyle, animationSpeed);
       }
-      setTimeout(() => {
-        barOneStyle.backgroundColor =
-          animationType === 'swap' ? TERTIARY_COLOR : PRIMARY_COLOR;
-        barTwoStyle.backgroundColor =
-          animationType === 'swap' ? TERTIARY_COLOR : PRIMARY_COLOR;
-      }, timer * animationSpeed);
+
+      beetweenAnimations(
+        timer,
+        barOneStyle,
+        barTwoStyle,
+        animationSpeed,
+        animationType,
+        false
+      );
+
       if (animationType === 'swap') {
         timer++;
-        // add timer if color is red, aka its swap
         setTimeout(() => {
           barOneStyle.height = `${heightOne * 0.7}px`;
           barTwoStyle.height = `${heightTwo * 0.7}px`;
@@ -52,33 +48,28 @@ export const heapSortAnimation = (array: number[], animationSpeed: number) => {
           barTwo.innerHTML = array.length <= 20 ? `${heightTwo}` : '';
         }, timer * animationSpeed);
         timer++;
-        // remove red color, timer++
         setTimeout(() => {
           barOneStyle.backgroundColor = PRIMARY_COLOR;
           barTwoStyle.backgroundColor = PRIMARY_COLOR;
         }, timer * animationSpeed);
-        // timer++;
       }
     } else {
+      // mark removed item from max-heap as sorted
       const [valueOne] = animations[i].value;
       const [sortedIndex] = valueOne;
       setTimeout(() => {
         const bar = bars[sortedIndex] as HTMLElement;
-        bar.style.backgroundColor = 'purple';
+        bar.style.backgroundColor = QUINARY_COLOR;
       }, timer * animationSpeed);
     }
   }
-  // at the end, color 1st element
+  // at the end, color 1st element as sorted
   setTimeout(() => {
     const bar = bars[0] as HTMLElement;
-    bar.style.backgroundColor = 'purple';
+    bar.style.backgroundColor = QUINARY_COLOR;
   }, timer * animationSpeed);
-  timer++;
-  for (let i = 0; i < array.length; i++) {
-    setTimeout(() => {
-      const bar = bars[i] as HTMLElement;
-      bar.style.backgroundColor = PRIMARY_COLOR;
-    }, timer * animationSpeed);
-  }
+
+  // after sorting, reset color back to green
+  timer = resetColor(timer, array, bars, animationSpeed);
   return [array, timer];
 };

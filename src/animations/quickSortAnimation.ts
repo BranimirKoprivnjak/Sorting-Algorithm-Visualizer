@@ -1,12 +1,12 @@
 import {
   PRIMARY_COLOR,
-  SECONDARY_COLOR,
-  TERTIARY_COLOR,
   QUATERNARY_COLOR,
   QUINARY_COLOR,
 } from '../config/config';
 import { quickSortAnimations } from '../algorithms/quickSort';
 import { Animation } from '../models/model';
+
+import { resetColor, comparison, beetweenAnimations } from './helpers';
 
 export const quickSortAnimation = (array: number[], animationSpeed: number) => {
   const animations: Animation[] = quickSortAnimations(array);
@@ -20,11 +20,13 @@ export const quickSortAnimation = (array: number[], animationSpeed: number) => {
     const animationType = animations[i].type;
     if (animationType === 'pivot') {
       setTimeout(() => {
+        // reset old pivot
         if (pivot.height !== 0) {
           const bar = bars[pivot.index] as HTMLElement;
           bar.style.backgroundColor =
             array.length >= 50 ? QUINARY_COLOR : PRIMARY_COLOR;
         }
+        // assign new pivot
         const [pivotIndex, pivotValue] = animations[i].value;
         [pivot.index] = pivotIndex;
         [pivot.height] = pivotValue;
@@ -36,19 +38,20 @@ export const quickSortAnimation = (array: number[], animationSpeed: number) => {
       const barTwo = bars[indexTwo] as HTMLElement;
       const barOneStyle = barOne.style;
       const barTwoStyle = barTwo.style;
+
       if (animationType === 'comparison') {
-        setTimeout(() => {
-          barOneStyle.backgroundColor = SECONDARY_COLOR;
-          barTwoStyle.backgroundColor = SECONDARY_COLOR;
-        }, timer * animationSpeed);
-        timer++;
+        timer = comparison(timer, barOneStyle, barTwoStyle, animationSpeed);
       }
-      setTimeout(() => {
-        barOneStyle.backgroundColor =
-          animationType === 'swap' ? TERTIARY_COLOR : PRIMARY_COLOR;
-        barTwoStyle.backgroundColor =
-          animationType === 'swap' ? TERTIARY_COLOR : PRIMARY_COLOR;
-      }, timer * animationSpeed);
+
+      beetweenAnimations(
+        timer,
+        barOneStyle,
+        barTwoStyle,
+        animationSpeed,
+        animationType,
+        false
+      );
+
       if (animationType === 'swap') {
         timer++;
         // add timer if color is red, aka its swap
@@ -61,21 +64,24 @@ export const quickSortAnimation = (array: number[], animationSpeed: number) => {
         timer++;
         setTimeout(() => {
           // if we are comparing same values, any can become pivot
-          let check = false;
+          let isPivot = false;
           if (heightOne === pivot.height) {
             // delete old pivot
             const bar = bars[pivot.index] as HTMLElement;
             bar.style.backgroundColor = PRIMARY_COLOR;
-            check = true;
+            // set new pivot
+            isPivot = true;
             barOneStyle.backgroundColor = QUATERNARY_COLOR;
             pivot.index = indexOne;
           } else {
             barOneStyle.backgroundColor = PRIMARY_COLOR;
           }
-          if (heightTwo === pivot.height && !check) {
+          if (heightTwo === pivot.height && !isPivot) {
+            // delete old pivot
             const bar = bars[pivot.index] as HTMLElement;
             bar.style.backgroundColor = PRIMARY_COLOR;
 
+            // set new pivot
             barTwoStyle.backgroundColor = QUATERNARY_COLOR;
             pivot.index = indexTwo;
           } else {
@@ -95,34 +101,28 @@ export const quickSortAnimation = (array: number[], animationSpeed: number) => {
       if (array.length >= 50) {
         if (array[indexOne] === heightOne) {
           setTimeout(() => {
-            barOneStyle.backgroundColor = 'purple';
+            barOneStyle.backgroundColor = QUINARY_COLOR;
           }, timer * animationSpeed);
           timer++;
         }
         if (array[indexTwo] === heightTwo) {
           setTimeout(() => {
-            barTwoStyle.backgroundColor = 'purple';
+            barTwoStyle.backgroundColor = QUINARY_COLOR;
           }, timer * animationSpeed);
           timer++;
         }
         if (indexOne === indexTwo || Math.abs(indexOne - indexTwo) === 1) {
           setTimeout(() => {
-            barOneStyle.backgroundColor = 'purple';
-            barTwoStyle.backgroundColor = 'purple';
+            barOneStyle.backgroundColor = QUINARY_COLOR;
+            barTwoStyle.backgroundColor = QUINARY_COLOR;
           }, timer * animationSpeed);
           timer++;
         }
       }
     }
   }
-  if (array.length >= 50) {
-    timer++;
-    for (let i = 0; i < array.length; i++) {
-      setTimeout(() => {
-        const bar = bars[i] as HTMLElement;
-        bar.style.backgroundColor = PRIMARY_COLOR;
-      }, timer * animationSpeed);
-    }
-  }
+  // after sorting, reset color back to green
+  if (array.length >= 50)
+    timer = resetColor(timer, array, bars, animationSpeed);
   return [array, timer];
 };
