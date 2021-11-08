@@ -33,6 +33,12 @@ const merge = (
   let k = startIndex,
     i = startIndex,
     j = middleIndex + 1;
+  if (
+    i === 0 &&
+    (j === Math.floor(array.length / 2) ||
+      j === Math.floor(array.length / 2) + 1)
+  )
+    animations.push({ type: 'flag', value: [[i], [j]] });
   while (i <= middleIndex && j <= endIndex) {
     animations.push({ type: 'comparison', value: [[i], [j]] });
     if (auxArray[i] <= auxArray[j]) {

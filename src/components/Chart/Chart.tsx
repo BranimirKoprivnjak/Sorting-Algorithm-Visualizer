@@ -8,7 +8,7 @@ const Chart: React.FC<{ state: State }> = ({ state }) => {
 
   return (
     <>
-      <Legend algorithm={state.algorithm} />
+      <Legend algorithm={state.algorithm} array={array} />
       <div className={classes.chart}>
         {array.map((value: number, index: number) => (
           <div

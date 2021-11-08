@@ -3,6 +3,7 @@ import {
   SECONDARY_COLOR,
   TERTIARY_COLOR,
   QUATERNARY_COLOR,
+  QUINARY_COLOR,
 } from '../config/config';
 import { quickSortAnimations } from '../algorithms/quickSort';
 import { Animation } from '../models/model';
@@ -21,7 +22,8 @@ export const quickSortAnimation = (array: number[], animationSpeed: number) => {
       setTimeout(() => {
         if (pivot.height !== 0) {
           const bar = bars[pivot.index] as HTMLElement;
-          bar.style.backgroundColor = PRIMARY_COLOR;
+          bar.style.backgroundColor =
+            array.length >= 50 ? QUINARY_COLOR : PRIMARY_COLOR;
         }
         const [pivotIndex, pivotValue] = animations[i].value;
         [pivot.index] = pivotIndex;
@@ -29,7 +31,6 @@ export const quickSortAnimation = (array: number[], animationSpeed: number) => {
         const pivotBar = bars[pivot.index] as HTMLElement;
         pivotBar.style.backgroundColor = QUATERNARY_COLOR;
       }, timer * animationSpeed);
-      // timer++;
     } else {
       const barOne = bars[indexOne] as HTMLElement;
       const barTwo = bars[indexTwo] as HTMLElement;
@@ -91,6 +92,36 @@ export const quickSortAnimation = (array: number[], animationSpeed: number) => {
         }, timer * animationSpeed);
         timer++;
       }
+      if (array.length >= 50) {
+        if (array[indexOne] === heightOne) {
+          setTimeout(() => {
+            barOneStyle.backgroundColor = 'purple';
+          }, timer * animationSpeed);
+          timer++;
+        }
+        if (array[indexTwo] === heightTwo) {
+          setTimeout(() => {
+            barTwoStyle.backgroundColor = 'purple';
+          }, timer * animationSpeed);
+          timer++;
+        }
+        if (indexOne === indexTwo || Math.abs(indexOne - indexTwo) === 1) {
+          setTimeout(() => {
+            barOneStyle.backgroundColor = 'purple';
+            barTwoStyle.backgroundColor = 'purple';
+          }, timer * animationSpeed);
+          timer++;
+        }
+      }
+    }
+  }
+  if (array.length >= 50) {
+    timer++;
+    for (let i = 0; i < array.length; i++) {
+      setTimeout(() => {
+        const bar = bars[i] as HTMLElement;
+        bar.style.backgroundColor = PRIMARY_COLOR;
+      }, timer * animationSpeed);
     }
   }
   return [array, timer];

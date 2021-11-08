@@ -17,6 +17,7 @@ export const heapSort = (array: number[]) => {
         [i, temp],
       ],
     });
+    animations.push({ type: 'sorted', value: [[i]] });
     maxHeapify(array, i, 0, animations);
   }
   return animations;

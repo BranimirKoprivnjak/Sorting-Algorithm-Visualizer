@@ -40,6 +40,7 @@ export const bubbleSortOpt = (array: number[]) => {
       }
     }
     n = lastSwap;
+    animations.push({ type: 'lastSwap', value: [[n]] });
   }
   return animations;
 };
