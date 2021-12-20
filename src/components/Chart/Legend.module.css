@@ -1,3 +1,12 @@
+.tutorial {
+  font-weight: 300;
+  font-size: 0.9rem;
+  color: #cbc7c0;
+  width: 40rem;
+  margin: 0 auto;
+  padding-top: 15px;
+}
+
 .legend {
   display: flex;
   flex-direction: column;
